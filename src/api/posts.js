@@ -7,12 +7,12 @@ let base =
     ? '/api/posts'
     : 'https://facebookapi-2txh.onrender.com/api/posts');
 
-export function setBaseUrl(url: string) {
+export function setBaseUrl(url) {
   if (!url) return;
   base = url.endsWith('/') ? url.slice(0, -1) : url;
 }
 
-async function handleResponse(res: Response) {
+async function handleResponse(res) {
   const text = await res.text();
 
   if (!res.ok) {
@@ -42,12 +42,12 @@ export async function listPosts() {
   return data || [];
 }
 
-export async function getPost(id: string) {
+export async function getPost(id) {
   const res = await fetch(`${base}/${id}`);
   return handleResponse(res);
 }
 
-export async function createPost(payload: unknown) {
+export async function createPost(payload) {
   const res = await fetch(base, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -56,7 +56,7 @@ export async function createPost(payload: unknown) {
   return handleResponse(res);
 }
 
-export async function updatePost(id: string, payload: unknown) {
+export async function updatePost(id, payload) {
   const res = await fetch(`${base}/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
@@ -65,7 +65,7 @@ export async function updatePost(id: string, payload: unknown) {
   return handleResponse(res);
 }
 
-export async function deletePost(id: string) {
+export async function deletePost(id) {
   const res = await fetch(`${base}/${id}`, { method: 'DELETE' });
   return handleResponse(res);
 }
