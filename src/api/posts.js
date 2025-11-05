@@ -1,16 +1,18 @@
-
 // Prefer an env-configured base (Vite): set VITE_API_BASE to override in development/production
 // In dev default to the relative path so the Vite proxy can forward requests and avoid CORS.
 // In production default to the hosted API endpoint.
-let base = import.meta.env.VITE_API_BASE
-  || (import.meta.env.DEV ? '/api/posts' : 'https://facebookapi-2txh.onrender.com/api/posts
+let base =
+  import.meta.env.VITE_API_BASE ||
+  (import.meta.env.DEV
+    ? '/api/posts'
+    : 'https://facebookapi-2txh.onrender.com/api/posts');
 
-export function setBaseUrl(url) {
+export function setBaseUrl(url: string) {
   if (!url) return;
   base = url.endsWith('/') ? url.slice(0, -1) : url;
-} 
+}
 
-async function handleResponse(res) {
+async function handleResponse(res: Response) {
   // Read raw text first so we can safely handle empty responses
   const text = await res.text();
 
@@ -32,7 +34,7 @@ async function handleResponse(res) {
   // Try to parse JSON, fallback to raw text
   try {
     return JSON.parse(text);
-  } catch (err) {
+  } catch {
     return text;
   }
 }
@@ -44,32 +46,32 @@ export async function listPosts() {
   return data || [];
 }
 
-export async function getPost(id) {
+export async function getPost(id: string) {
   const res = await fetch(`${base}/${id}`);
   return handleResponse(res);
 }
 
-export async function createPost(payload) {
+export async function createPost(payload: unknown) {
   const res = await fetch(base, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   });
   return handleResponse(res);
 }
 
-export async function updatePost(id, payload) {
+export async function updatePost(id: string, payload: unknown) {
   const res = await fetch(`${base}/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   });
   return handleResponse(res);
 }
 
-export async function deletePost(id) {
+export async function deletePost(id: string) {
   const res = await fetch(`${base}/${id}`, {
-    method: 'DELETE'
+    method: 'DELETE',
   });
   return handleResponse(res);
 }
