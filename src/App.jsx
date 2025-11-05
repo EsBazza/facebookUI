@@ -117,6 +117,11 @@ export default function App() {
             posts={posts}
             onEdit={(post) => setEditing(post)}
             onDelete={(id) => handleDelete(id)}
+            onUpdate={(updated) => handleUpdate(updated.id, {
+              author: updated.author,
+              content: updated.content,
+              imageUrl: updated.imageUrl
+            })}
           />
         </section>
       </main>
