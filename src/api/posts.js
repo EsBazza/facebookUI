@@ -13,7 +13,6 @@ export function setBaseUrl(url: string) {
 }
 
 async function handleResponse(res: Response) {
-  // Read raw text first so we can safely handle empty responses
   const text = await res.text();
 
   if (!res.ok) {
@@ -21,28 +20,25 @@ async function handleResponse(res: Response) {
     try {
       const json = JSON.parse(text);
       msg = json.message || JSON.stringify(json);
-    } catch {}
+    } catch {
+      // ignore parse errors, fall back to raw text
+    }
     throw new Error(msg || res.statusText);
   }
 
-  // No content
-  if (res.status === 204) return null;
+  if (res.status === 204) return null; // No content
+  if (!text) return null;              // Empty body
 
-  // Empty body (some endpoints return 200 with empty body) — treat as null
-  if (!text) return null;
-
-  // Try to parse JSON, fallback to raw text
   try {
     return JSON.parse(text);
   } catch {
-    return text;
+    return text; // Fallback to raw text
   }
 }
 
 export async function listPosts() {
   const res = await fetch(base);
   const data = await handleResponse(res);
-  // ensure callers get an array for list endpoints
   return data || [];
 }
 
@@ -70,8 +66,6 @@ export async function updatePost(id: string, payload: unknown) {
 }
 
 export async function deletePost(id: string) {
-  const res = await fetch(`${base}/${id}`, {
-    method: 'DELETE',
-  });
+  const res = await fetch(`${base}/${id}`, { method: 'DELETE' });
   return handleResponse(res);
 }
